@@ -1,0 +1,40 @@
+Package: TSGenerator
+Title: 'Copernicus' HR-VPP Vegetation Time-Series Processing
+Version: 2.0.0
+Authors@R: c(
+    person("Alexey", "Valero-Jorge", , "avalero@cita-aragon.es", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-5993-7346")),
+    person("M. Auxiliadora", "Casterad Seral", role = "aut",
+           comment = c(ORCID = "0000-0003-4458-6966")),
+    person("Jose-Tomas", "Alcala Nalvaiz", role = "aut",
+           comment = c(ORCID = "0000-0001-7549-8825"))
+    )
+Description: Provides tools for acquiring, extracting, quality-assessing, and
+    analysing vegetation time series derived from 'Copernicus' High Resolution
+    Vegetation Phenology and Productivity (HR-VPP) products. Supports Seasonal
+    Trajectories (ST) and Vegetation Phenology and Productivity (VPP) products
+    through native R access to 'WEkEO', geospatial processing, product-quality
+    assessment, temporal completeness analysis, missingness modelling, and
+    integrated graphical workflows. Selected functions from 'TSGenerator' 1.x are
+    retained to support migration and legacy workflows.
+License: MIT + file LICENSE
+Encoding: UTF-8
+RoxygenNote: 7.3.3
+URL: https://github.com/avalero92/TSGenerator
+BugReports: https://github.com/avalero92/TSGenerator/issues
+Imports: hdar, jsonlite, stringr, utils, ggplot2, mgcv, scales, shiny,
+        shinydashboard, shinyjs, shinycssloaders, DT, readr, terra
+Suggests: imputeTS, knitr, rmarkdown, testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+NeedsCompilation: no
+Packaged: 2026-10-10 17:34:03 UTC; runner
+Author: Alexey Valero-Jorge [aut, cre] (ORCID:
+    <https://orcid.org/0000-0002-5993-7346>),
+  M. Auxiliadora Casterad Seral [aut] (ORCID:
+    <https://orcid.org/0000-0003-4458-6966>),
+  Jose-Tomas Alcala Nalvaiz [aut] (ORCID:
+    <https://orcid.org/0000-0001-7549-8825>)
+Maintainer: Alexey Valero-Jorge <avalero@cita-aragon.es>
+Repository: CRAN
+Date/Publication: 2026-10-21 14:50:19 UTC

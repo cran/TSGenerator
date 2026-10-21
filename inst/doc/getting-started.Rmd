@@ -1,0 +1,149 @@
+---
+title: "Getting started with TSGenerator 2.0"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with TSGenerator 2.0}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(TSGenerator)
+```
+
+## Scope
+
+TSGenerator 2.0 focuses on currently supported Copernicus HR-VPP Seasonal Trajectories (ST) and Vegetation Phenology and Productivity (VPP). Its core is native R: `hdar` for WEkEO acquisition and `terra` for geospatial processing.
+
+The recommended workflow is:
+
+1. diagnose WEkEO access;
+2. preview/download ST or VPP;
+3. extract polygon-level values;
+4. assess product quality and temporal completeness separately;
+5. optionally impute user/raw series;
+6. model temporal missingness when required.
+
+## WEkEO configuration
+
+The offline diagnostic is safe to run during package checks. Online authentication is intentionally not evaluated when the vignette is built because it requires an active Internet connection, the external WEkEO service, and valid user credentials. WEkEO service availability is outside the control of TSGenerator; offline processing and package checks do not depend on it.
+
+```{r}
+check_wekeo()
+```
+
+```{r wekeo-online, eval=FALSE}
+check_wekeo(online = TRUE)
+```
+
+Use `hda_client()` when credentials need to be supplied explicitly. TSGenerator does not require Python or `reticulate` for ST/VPP acquisition.
+
+## ST acquisition and extraction
+
+WEkEO catalogue queries and downloads are shown but not executed while building the vignette.
+
+```{r st-preview, eval=FALSE}
+st <- download_st(
+  start = "2020-04-01",
+  end = "2020-04-30",
+  tile_id = "30TXM",
+  product = c("PPI", "QFLAG"),
+  download = FALSE
+)
+```
+
+After downloading PPI GeoTIFFs, extract a parcel statistic:
+
+```{r st-extraction, eval=FALSE}
+st_ts <- extract_ts(
+  x = "HRVPP_ST/PPI",
+  polygons = parcels,
+  id_col = "Parcel_ID",
+  fun = "median"
+)
+```
+
+`extract_ts()` returns tidy records and does not use row names as polygon identifiers.
+
+## VPP acquisition and extraction
+
+```{r vpp-preview, eval=FALSE}
+vpp <- download_vpp(
+  start = "2020-01-01",
+  end = "2020-12-31",
+  tile_id = "30TXM",
+  product = c("SOSD", "MAXD", "EOSD", "LENGTH", "MAXV"),
+  season = "s1",
+  download = FALSE
+)
+```
+
+```{r vpp-extraction, eval=FALSE}
+vpp_values <- extract_vpp(
+  x = "HRVPP_VPP",
+  polygons = parcels,
+  id_col = "Parcel_ID",
+  fun = "median"
+)
+```
+
+`extract_vpp()` applies product-aware interpretation: date products are represented as dates, whereas spectral/productivity metrics remain numeric with their appropriate units/scaling.
+
+## Product quality versus temporal completeness
+
+These are different concepts. Quality definitions are local package data and can be inspected without network access.
+
+```{r}
+quality_info("ST")
+quality_info("VPP")
+```
+
+Use `mask_quality()` only when masking is scientifically appropriate. QFLAG is categorical and is not automatically resampled.
+
+For temporal completeness, the following self-contained example distinguishes an expected date absent from the table from a present date whose value is `NA`.
+
+```{r}
+example_ts <- data.frame(
+  ID = c("A", "A", "A", "B", "B", "B"),
+  Date = as.Date(c(
+    "2020-04-01", "2020-04-11", "2020-05-01",
+    "2020-04-01", "2020-04-11", "2020-04-21"
+  )),
+  Value = c(0.22, NA, 0.61, 0.18, 0.35, 0.52)
+)
+
+plan <- temporal_plan(example_ts, expected_step = 10)
+summarize_missingness(plan)
+assess_ts_quality(plan)
+```
+
+## Imputation policy
+
+Imputation is optional and explicit. This example uses only base-R linear interpolation and does not require an external service or optional package.
+
+```{r}
+imputed <- impute_ts(
+  example_ts,
+  method = "linear",
+  series_type = "user",
+  complete_grid = TRUE,
+  expected_step = 10,
+  max_gap = 2
+)
+imputed
+```
+
+Because ST is already temporally processed, TSGenerator blocks routine ST re-imputation unless `allow_processed = TRUE` is deliberately specified.
+
+## Live integration check
+
+Live integration checks are release/maintenance diagnostics and are never executed while CRAN builds this vignette.
+
+```{r live-integration, eval=FALSE}
+z <- check_wekeo_integration(download = FALSE)
+print(z)
+stopifnot(z$ok)
+```
+
+A controlled `download = TRUE` smoke test can additionally verify that returned GeoTIFFs are readable by `terra`.
