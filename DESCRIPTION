@@ -1,6 +1,6 @@
 Package: TSGenerator
 Title: 'Copernicus' HR-VPP Vegetation Time-Series Processing
-Version: 2.0.0
+Version: 2.0.1
 Authors@R: c(
     person("Alexey", "Valero-Jorge", , "avalero@cita-aragon.es", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-5993-7346")),
@@ -24,11 +24,11 @@ URL: https://github.com/avalero92/TSGenerator
 BugReports: https://github.com/avalero92/TSGenerator/issues
 Imports: hdar, jsonlite, stringr, utils, ggplot2, mgcv, scales, shiny,
         shinydashboard, shinyjs, shinycssloaders, DT, readr, terra
-Suggests: imputeTS, knitr, rmarkdown, testthat (>= 3.0.0)
+Suggests: imputeTS, knitr, rmarkdown, sf, testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2026-10-10 17:34:03 UTC; runner
+Packaged: 2026-10-24 17:51:25 UTC; alexa
 Author: Alexey Valero-Jorge [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-5993-7346>),
   M. Auxiliadora Casterad Seral [aut] (ORCID:
@@ -37,4 +37,4 @@ Author: Alexey Valero-Jorge [aut, cre] (ORCID:
     <https://orcid.org/0000-0001-7549-8825>)
 Maintainer: Alexey Valero-Jorge <avalero@cita-aragon.es>
 Repository: CRAN
-Date/Publication: 2026-10-21 14:50:19 UTC
+Date/Publication: 2026-10-24 22:00:12 UTC
